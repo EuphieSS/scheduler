@@ -1,6 +1,5 @@
 import React from "react";
 
-import "components/DayListItem";
 import DayListItem from "components/DayListItem";
 
 
@@ -15,7 +14,7 @@ export default function DayList(props) {
         name={item.name}
         spots={item.spots}
         selected={item.name === day}
-        setDay={setDay}
+        setDay={() => setDay(item.name)}
       />
     );
   });
