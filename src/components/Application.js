@@ -7,46 +7,8 @@ import DayList from "./DayList";
 import "components/Appointment";
 import Appointment from "components/Appointment";
 
+import { getAppointmentsForDay } from "helpers/selectors"
 
-///////////// MOCK DATA /////////////
-const appointments = {
-  "1": {
-    id: 1,
-    time: "12pm",
-  },
-  "2": {
-    id: 2,
-    time: "1pm",
-    interview: {
-      student: "Lydia Miller-Jones",
-      interviewer:{
-        id: 3,
-        name: "Sylvia Palmer",
-        avatar: "https://i.imgur.com/LpaY82x.png",
-      }
-    }
-  },
-  "3": {
-    id: 3,
-    time: "2pm",
-  },
-  "4": {
-    id: 4,
-    time: "3pm",
-    interview: {
-      student: "Archie Andrews",
-      interviewer:{
-        id: 4,
-        name: "Cohana Roy",
-        avatar: "https://i.imgur.com/FK8V841.jpg",
-      }
-    }
-  },
-  "5": {
-    id: 5,
-    time: "4pm",
-  }
-};
 
 export default function Application(props) {
   const [state, setState] = useState({
@@ -56,14 +18,16 @@ export default function Application(props) {
   });
 
   const setDay = day => setState({ ...state, day });
-  const setDays = days => setState(prev => ({ ...prev, days }));
+  // const setDays = days => setState(prev => ({ ...prev, days }));
 
-  const appointmentList = Object.values(appointments); //To transform appointments into an array so it can be mapped
-  const appointmentArray = appointmentList.map(appointment => {
+  const dailyAppointments = getAppointmentsForDay(state, state.day);
+
+  const appointmentArray = dailyAppointments.map(appointment => {
     return (
       <Appointment
         key={appointment.id}
         {...appointment} //If we want every key in an object to become a prop for a component, we can spread the object into the props definition
+        // KEEPING BELOW FOR NOTES
         // id={appointment.id}
         // time={appointment.time}
         // interview={appointment.interview}
@@ -72,13 +36,18 @@ export default function Application(props) {
   });
 
   useEffect(() => {
-    Axios.get("/api/days") //use axios to make a request as a side effect and update the component when data is retrieved
-      .then(response => {
-        setDays(response.data); //response.data is an array of day objects; setDays sets this array as the value of days
-        console.log(response.data)
-      })
-      .catch(error => console.log(error))
-  }, []); //the empty array allows the request to run once after the component renders for the first time, and prevents the infinite loop of rerunning this effect
+    Promise.all([
+      Axios.get("/api/days"), //because of the proxy in package.json, no need to include http://localhost:8001
+      Axios.get("/api/appointments"),
+      // Axios.get("/api/interviewers")
+    ]).then((all) => {
+      setState(prev => ({...prev,
+        days: all[0].data,
+        appointments: all[1].data,
+        // interviewers: all[2].data 
+      }));
+    });
+  }, []); //the empty array allows the requests to run once after the component renders for the first time, and prevents the infinite loop of rerunning this effect
 
   return (
     <main className="layout">
