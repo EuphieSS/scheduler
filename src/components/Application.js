@@ -49,8 +49,8 @@ const appointments = {
 };
 
 export default function Application(props) {
-  const [day, setDay] = useState("Monday");
-  const [days, setDays] = useState([]);
+  const [day, setDay] = useState("Monday"); //used by <DayList />
+  const [days, setDays] = useState([]); //used in useEffect()
 
   const appointmentList = Object.values(appointments); //To transform appointments into an array so it can be mapped
   const appointmentArray = appointmentList.map(appointment => {
