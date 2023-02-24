@@ -49,8 +49,14 @@ const appointments = {
 };
 
 export default function Application(props) {
-  const [day, setDay] = useState("Monday"); //used by <DayList />
-  const [days, setDays] = useState([]); //used in useEffect()
+  const [state, setState] = useState({
+    day: "Monday",
+    days: [],
+    appointments: {}
+  });
+
+  const setDay = day => setState({ ...state, day });
+  const setDays = days => setState(prev => ({ ...prev, days }));
 
   const appointmentList = Object.values(appointments); //To transform appointments into an array so it can be mapped
   const appointmentArray = appointmentList.map(appointment => {
@@ -69,6 +75,7 @@ export default function Application(props) {
     Axios.get("/api/days") //use axios to make a request as a side effect and update the component when data is retrieved
       .then(response => {
         setDays(response.data); //response.data is an array of day objects; setDays sets this array as the value of days
+        console.log(response.data)
       })
       .catch(error => console.log(error))
   }, []); //the empty array allows the request to run once after the component renders for the first time, and prevents the infinite loop of rerunning this effect
@@ -86,8 +93,8 @@ export default function Application(props) {
         
         <nav className="sidebar__menu">
         <DayList
-          days={days}
-          value={day}
+          days={state.days}
+          value={state.day}
           onChange={setDay}
         />
         </nav>
