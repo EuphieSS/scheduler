@@ -42,14 +42,11 @@ export function getInterview(state, interview) {
   if (interview) {
     result.student = interview.student;
     
-    for (const id in state.interviewers) {
-      if (id === interview.interviewer.toString()) {
-        result.interviewer = state.interviewers[id];
-      }
-    }
+    let id = interview.interviewer;
+    result.interviewer = state.interviewers[id];
   } else {
     result = null;
   }
   
-  return result;  
+  return result;
 };
