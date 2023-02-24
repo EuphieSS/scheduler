@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Axios from "axios";
 
 import "components/Application.scss";
 
@@ -8,24 +9,6 @@ import Appointment from "components/Appointment";
 
 
 ///////////// MOCK DATA /////////////
-const days = [
-  {
-    id: 1,
-    name: "Monday",
-    spots: 2,
-  },
-  {
-    id: 2,
-    name: "Tuesday",
-    spots: 5,
-  },
-  {
-    id: 3,
-    name: "Wednesday",
-    spots: 0,
-  },
-];
-
 const appointments = {
   "1": {
     id: 1,
@@ -67,6 +50,7 @@ const appointments = {
 
 export default function Application(props) {
   const [day, setDay] = useState("Monday");
+  const [days, setDays] = useState([]);
 
   const appointmentList = Object.values(appointments); //To transform appointments into an array so it can be mapped
   const appointmentArray = appointmentList.map(appointment => {
@@ -74,9 +58,20 @@ export default function Application(props) {
       <Appointment
         key={appointment.id}
         {...appointment} //If we want every key in an object to become a prop for a component, we can spread the object into the props definition
+        // id={appointment.id}
+        // time={appointment.time}
+        // interview={appointment.interview}
       />
     )
-  })
+  });
+
+  useEffect(() => {
+    Axios.get("/api/days") //use axios to make a request as a side effect and update the component when data is retrieved
+      .then(response => {
+        setDays(response.data); //response.data is an array of day objects; setDays sets this array as the value of days
+      })
+      .catch(error => console.log(error))
+  }, []); //the empty array allows the request to run once after the component renders for the first time, and prevents the infinite loop of rerunning this effect
 
   return (
     <main className="layout">
