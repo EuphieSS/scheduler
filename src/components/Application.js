@@ -27,11 +27,11 @@ export default function Application(props) {
     return (
       <Appointment
         key={appointment.id}
-        // {...appointment} //If we want every key in an object to become a prop for a component, we can spread the object into the props definition
+        {...appointment} //If we want every key in an object to become a prop for a component, we can spread the object into the props definition
         // KEEPING BELOW FOR NOTES
-        id={appointment.id}
-        time={appointment.time}
-        interview={interview}
+        // id={appointment.id}
+        // time={appointment.time}
+        // interview={appointment.interview}
       />
     )
   });
