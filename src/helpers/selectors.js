@@ -1,9 +1,9 @@
 //to revisit; refactor for more efficient code
 /** expected result: an [] or similar to below
 [
-  {id: 1, time: '12pm', interview: null}
-  {id: 2, time: '1pm', interview: null}
-  {id: 3, time: '2pm', interview: {…}}
+  {id: 1, time: '12pm', interview: null},
+  {id: 2, time: '1pm', interview: null},
+  {id: 3, time: '2pm', interview: {…}},
   ......
 ] */
 export function getAppointmentsForDay(state, day) {
@@ -11,7 +11,7 @@ export function getAppointmentsForDay(state, day) {
 
   const filteredDay = state.days.filter(dayObj => dayObj.name === day);
   
-  if(filteredDay.length === 0) {
+  if(filteredDay.length === 0 || filteredDay === undefined) {
     return filteredDay;
   }
   
@@ -48,5 +48,41 @@ export function getInterview(state, interview) {
     result = null;
   }
   
+  return result;
+};
+
+
+//to revisit; refactor for more efficient code
+/** expected result: an [] or similar to below
+[
+  {  
+    "id": 1,
+    "name": "Sylvia Palmer",
+    "avatar": "https://i.imgur.com/LpaY82x.png"
+  },
+  {
+    id: 2,
+    name: "Tori Malcolm",
+    avatar: "https://i.imgur.com/Nmx0Qxo.png"
+  }
+  ......
+] */
+export function getInterviewersForDay(state, day) {
+  const result = [];
+
+  const filteredDay = state.days.filter(dayObj => dayObj.name === day);
+  
+  if(filteredDay.length === 0 || filteredDay === undefined) {
+    return filteredDay;
+  }
+  
+  const interviewers = filteredDay[0].interviewers;
+  
+  interviewers.forEach(interviewer => {
+    if (Object.keys(state.interviewers).includes(interviewer.toString())) {
+      result.push(state.interviewers[interviewer]);
+    }
+  })
+
   return result;
 };
