@@ -7,7 +7,7 @@ import DayList from "./DayList";
 import "components/Appointment";
 import Appointment from "components/Appointment";
 
-import { getAppointmentsForDay } from "helpers/selectors"
+import { getAppointmentsForDay, getInterviewersForDay, getInterview } from "helpers/selectors"
 
 
 export default function Application(props) {
@@ -21,19 +21,49 @@ export default function Application(props) {
   const setDay = day => setState({ ...state, day });
   // const setDays = days => setState(prev => ({ ...prev, days }));
 
+  const bookInterview = (id, interview) => {
+    console.log(id, interview);
+
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    return Axios
+      .put(`/api/appointments/${id}`, { interview })
+      .then((response) => {
+        setState({ ...state, appointments });
+        console.log(response);
+      })
+      .catch(error => console.log(error));
+
+  };
+
   const dailyAppointments = getAppointmentsForDay(state, state.day);
 
+  const interviewerArray = getInterviewersForDay(state, state.day);
+  
   const appointmentArray = dailyAppointments.map(appointment => {
+    const interview = getInterview(state, appointment.interview)
+
     return (
       <Appointment
         key={appointment.id}
-        {...appointment} //If we want every key in an object to become a prop for a component, we can spread the object into the props definition
         // KEEPING BELOW FOR NOTES
-        // id={appointment.id}
-        // time={appointment.time}
-        // interview={appointment.interview}
+        // { ...appointment } //If we want every key in an object to become a prop for a component, we can spread the object into the props definition
+        id={appointment.id}
+        time={appointment.time}
+        interview={interview}
+        interviewers={interviewerArray}
+        bookInterview={bookInterview}
       />
     )
+
   });
 
   useEffect(() => {
@@ -42,9 +72,9 @@ export default function Application(props) {
       Axios.get("/api/appointments"),
       Axios.get("/api/interviewers")
     ]).then((all) => {
-      console.log(all[0].data);
-      console.log(all[1].data);
-      console.log(all[2].data);
+      // console.log(all[0].data);
+      // console.log(all[1].data);
+      // console.log(all[2].data);
       setState(prev => ({...prev,
         days: all[0].data,
         appointments: all[1].data,
@@ -86,4 +116,5 @@ export default function Application(props) {
       </section>
     </main>
   );
+  
 }

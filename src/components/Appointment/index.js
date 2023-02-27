@@ -6,20 +6,35 @@ import Header from "./Header";
 import Show from "./Show";
 import Empty from "./Empty";
 import Form from "./Form";
+import Status from "./Status";
 
 import useVisualMode from "hooks/useVisualMode";
 
 
 export default function Appointment(props) {
-  const { time, interview } = props;
+  const { id, time, interview, interviewers, bookInterview } = props;
 
   const EMPTY = "EMPTY";
   const SHOW = "SHOW";
   const CREATE = "CREATE";
+  const SAVING = "SAVING";
 
-  const { mode, transition, back } = useVisualMode( //set up initial modes
-    interview ? SHOW : EMPTY
+  const { mode, transition, back } = useVisualMode( //mode determines which child component gets rendered
+    interview ? SHOW : EMPTY //set up initial modes
   );
+
+  const save = (name, interviewer) => {
+    const interview = {
+      student: name,
+      interviewer
+    };
+
+    transition(SAVING);
+
+    bookInterview(id, interview)
+      .then(() => transition(SHOW));
+
+  };
 
   return (
     <article className="appointment">
@@ -35,10 +50,12 @@ export default function Appointment(props) {
         />
       )}
       {mode === CREATE && (
-        <Form interviewers={[]}
-          onCancel={() => back(EMPTY)}
+        <Form interviewers={interviewers}
+          onCancel={back}
+          onSave={save}
         />
       )}
+      {mode === SAVING && <Status message="Saving" />}
     </article>
   );
 }
