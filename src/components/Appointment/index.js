@@ -7,17 +7,20 @@ import Show from "./Show";
 import Empty from "./Empty";
 import Form from "./Form";
 import Status from "./Status";
+import Confirm from "./Confirm";
 
 import useVisualMode from "hooks/useVisualMode";
 
 
 export default function Appointment(props) {
-  const { id, time, interview, interviewers, bookInterview } = props;
+  const { id, time, interview, interviewers, bookInterview, cancelInterview } = props;
 
   const EMPTY = "EMPTY";
   const SHOW = "SHOW";
   const CREATE = "CREATE";
   const SAVING = "SAVING";
+  const DELETING = "DELETING";
+  const CONFIRM = "CONFIRM";
 
   const { mode, transition, back } = useVisualMode( //mode determines which child component gets rendered
     interview ? SHOW : EMPTY //set up initial modes
@@ -36,6 +39,18 @@ export default function Appointment(props) {
 
   };
 
+  const deleteConfirmation = () => {
+    transition(CONFIRM);
+  };
+
+  const deleteAppointment = () => {
+      transition(DELETING);
+
+      cancelInterview(id)
+        .then(() => transition(EMPTY));
+
+  }
+
   return (
     <article className="appointment">
       {/** All <Appointment> components will render a <Header> that takes in a time prop */}
@@ -46,7 +61,7 @@ export default function Appointment(props) {
           student={interview.student}
           interviewer={interview.interviewer}
           // onEdit={onEdit}
-          // onDelete={onDelete}
+          onDelete={deleteConfirmation}
         />
       )}
       {mode === CREATE && (
@@ -56,6 +71,14 @@ export default function Appointment(props) {
         />
       )}
       {mode === SAVING && <Status message="Saving" />}
+      {mode === DELETING && <Status message="Deleting" />}
+      {mode === CONFIRM && (
+        <Confirm
+          message="Delete the appointment?"
+          onConfirm={deleteAppointment}
+          onCancel={back}
+        />
+      )}
     </article>
   );
 }
