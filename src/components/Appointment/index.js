@@ -21,6 +21,7 @@ export default function Appointment(props) {
   const SAVING = "SAVING";
   const DELETING = "DELETING";
   const CONFIRM = "CONFIRM";
+  const EDIT = "EDIT";
 
   const { mode, transition, back } = useVisualMode( //mode determines which child component gets rendered
     interview ? SHOW : EMPTY //set up initial modes
@@ -49,7 +50,7 @@ export default function Appointment(props) {
       cancelInterview(id)
         .then(() => transition(EMPTY));
 
-  }
+  };
 
   return (
     <article className="appointment">
@@ -60,7 +61,7 @@ export default function Appointment(props) {
         <Show
           student={interview.student}
           interviewer={interview.interviewer}
-          // onEdit={onEdit}
+          onEdit={() => transition(EDIT)}
           onDelete={deleteConfirmation}
         />
       )}
@@ -77,6 +78,15 @@ export default function Appointment(props) {
           message="Delete the appointment?"
           onConfirm={deleteAppointment}
           onCancel={back}
+        />
+      )}
+      {mode === EDIT && (
+        <Form
+          student={interview.student}
+          interviewer={interview.interviewer.id}
+          interviewers={interviewers}
+          onCancel={back}
+          onSave={save}
         />
       )}
     </article>
