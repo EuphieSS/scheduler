@@ -38,7 +38,6 @@ export default function Application(props) {
         setState({ ...state, appointments });
         console.log(response);
       })
-      .catch(error => console.log(error));
 
   };
 
@@ -59,7 +58,6 @@ export default function Application(props) {
         setState({ ...state, appointments });
         console.log(response);
       })
-      .catch(error => console.log(error));
 
   };
 

@@ -9,7 +9,7 @@ export default function useVisualMode(initMode) {
       setMode(newMode); //if replace is true, change to newMode
     } else {
       setMode(newMode); //if replace is true, change mode
-      history.push(newMode); //AND add newMode to history array (top of data stack)
+      setHistory(prev => ([...prev, newMode])); //AND add newMode to history array (top of data stack)
     }
   }
 
