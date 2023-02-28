@@ -12,6 +12,19 @@ export default function useApplicationData(props) {
 
   const setDay = day => setState({ ...state, day });
 
+  const findDayIndex = (day) => {
+    const dayIndices = {
+      Monday: 0,
+      Tuesday: 1,
+      Wednesday: 2,
+      Thursday: 3,
+      Friday: 4
+    }
+    return dayIndices[day];
+  }
+
+  const dayIndex = findDayIndex(state.day);
+
   const bookInterview = (id, interview) => {
     const appointment = {
       ...state.appointments[id],
@@ -23,10 +36,30 @@ export default function useApplicationData(props) {
       [id]: appointment
     };
 
+    let updatedSpots = {
+      ...state.days[dayIndex],
+      spots: state.days[dayIndex]
+    }
+
+    if (!state.appointments[id].interview) {
+      updatedSpots = {
+        ...state.days[dayIndex],
+        spots: state.days[dayIndex].spots - 1
+      }
+    } else {
+      updatedSpots = {
+        ...state.days[dayIndex],
+        spots: state.days[dayIndex].spots
+      }
+    }
+
+    const days = [...state.days];
+    days[dayIndex] = updatedSpots;
+
     return Axios
       .put(`/api/appointments/${id}`, { interview })
       .then((response) => {
-        setState({ ...state, appointments });
+        setState({ ...state, appointments, days });
         console.log(response);
       })
 
@@ -43,10 +76,18 @@ export default function useApplicationData(props) {
       [id]: appointment
     };
 
+    const updatedSpots = {
+      ...state.days[dayIndex],
+      spots: state.days[dayIndex].spots + 1
+    }
+
+    const days = [...state.days];
+    days[dayIndex] = updatedSpots;
+
     return Axios
       .delete(`/api/appointments/${id}`)
       .then((response) => {
-        setState({ ...state, appointments });
+        setState({ ...state, appointments, days });
         console.log(response);
       })
 
@@ -58,8 +99,8 @@ export default function useApplicationData(props) {
       Axios.get("/api/appointments"),
       Axios.get("/api/interviewers")
     ]).then((all) => {
-      // console.log(all[0].data);
-      // console.log(all[1].data);
+      console.log(all[0].data);
+      console.log(all[1].data);
       // console.log(all[2].data);
       setState(prev => ({...prev,
         days: all[0].data,
