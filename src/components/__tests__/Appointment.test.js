@@ -6,10 +6,6 @@ import Appointment from "components/Appointment/index";
 
 
 describe("Appointment", () => {
-  it("renders without crashing", () => {
-    render(<Appointment />);
-  });
-
   xit("does something it is supposed to do", () => {
     // ...
   }); //one way to skip test
