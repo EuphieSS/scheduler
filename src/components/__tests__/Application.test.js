@@ -1,4 +1,6 @@
 import React from "react";
+// import axios from "__mocks__/axios";
+import Axios from "axios";
 
 import { 
   render,
@@ -50,7 +52,6 @@ describe("Application", () => {
     fireEvent.click(getByAltText(appointment, "Sylvia Palmer")); //Click the first interviewer in the list
     
     fireEvent.click(getByText(appointment, "Save")); //Click the "Save" button on that same appointment
-
     expect(getByText(appointment, "Saving")).toBeInTheDocument(); //Check that the element with the text "Saving" is displayed
 
     await waitForElementToBeRemoved(() => getByText(appointment, "Saving"));
@@ -77,11 +78,9 @@ describe("Application", () => {
     ); //refer to index.js <article data-testid="appointment">
 
     fireEvent.click(queryByAltText(appointment, "Delete")); //refer to Show.js <img alt="Delete" />
-
     expect(getByText(appointment, "Delete the appointment?")).toBeInTheDocument(); //refer to Confirm.js with message prop from index.js
 
     fireEvent.click(queryByText(appointment, "Confirm")); //refer to Confirm button in Confirm.js
-
     expect(getByText(appointment, "Deleting")).toBeInTheDocument(); //refer to Status.js with message prop from index.js
 
     await waitForElementToBeRemoved(() => getByText(appointment, "Deleting"));
@@ -110,11 +109,80 @@ describe("Application", () => {
     fireEvent.click(getByAltText(appointment, "Sylvia Palmer"));
 
     fireEvent.click(getByText(appointment, "Save"));
-
     expect(getByText(appointment, "Saving")).toBeInTheDocument();
 
     await waitForElementToBeRemoved(() => getByText(appointment, "Saving"));
     expect(getByText(appointment, "Sylvia Palmer")).toBeInTheDocument(); //refer to Show.js {interviewer.name} prop from index.js
+
+    const day = getAllByTestId(container, "day").find(day =>
+      queryByText(day, "Monday")
+    );
+
+    expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
+
+  });
+
+
+  it("shows the save error when failing to save an appointment", async () => {
+    Axios.put.mockRejectedValueOnce();
+
+    const { container, debug } = render(<Application />);
+
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+
+    const appointment = getAllByTestId(container, "appointment").find(
+      appointment => queryByText(appointment, "Archie Cohen")
+    );
+
+    fireEvent.click(queryByAltText(appointment, "Edit"));
+
+    fireEvent.click(getByAltText(appointment, "Sylvia Palmer"));
+
+    fireEvent.click(getByText(appointment, "Save"));
+    expect(getByText(appointment, "Saving")).toBeInTheDocument();
+
+    await waitForElementToBeRemoved(() => getByText(appointment, "Saving"));
+    expect(getByText(appointment, "Could not save appointment.")).toBeInTheDocument(); //refer to Error.js {message} prop from index.js
+
+    fireEvent.click(queryByAltText(appointment, "Close"));
+
+    expect(getByText(appointment, "Save")).toBeInTheDocument();
+
+    fireEvent.click(queryByText(appointment, "Cancel"));
+
+    expect(getByText(container, "Archie Cohen")).toBeInTheDocument();
+
+    const day = getAllByTestId(container, "day").find(day =>
+      queryByText(day, "Monday")
+    );
+
+    expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
+
+  });
+
+  it("shows the delete error when failing to delete an existing appointment", async () => {
+    Axios.delete.mockRejectedValueOnce();
+
+    const { container, debug } = render(<Application />);
+
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+
+    const appointment = getAllByTestId(container, "appointment").find(
+      appointment => queryByText(appointment, "Archie Cohen")
+    );
+
+    fireEvent.click(queryByAltText(appointment, "Delete"));
+    expect(getByText(appointment, "Delete the appointment?")).toBeInTheDocument();
+
+    fireEvent.click(queryByText(appointment, "Confirm"));
+    expect(getByText(appointment, "Deleting")).toBeInTheDocument();
+
+    await waitForElementToBeRemoved(() => getByText(appointment, "Deleting"));
+    expect(getByText(appointment, "Could not delete appointment.")).toBeInTheDocument(); //refer to Error.js {message} prop from index.js
+    
+    fireEvent.click(queryByAltText(appointment, "Close"));
+
+    expect(getByText(container, "Archie Cohen")).toBeInTheDocument();
 
     const day = getAllByTestId(container, "day").find(day =>
       queryByText(day, "Monday")
