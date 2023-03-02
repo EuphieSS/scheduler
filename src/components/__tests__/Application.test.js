@@ -159,6 +159,7 @@ describe("Application", () => {
     expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
 
   });
+  
 
   it("shows the delete error when failing to delete an existing appointment", async () => {
     Axios.delete.mockRejectedValueOnce();

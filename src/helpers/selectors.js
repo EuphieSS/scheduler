@@ -1,4 +1,3 @@
-//to revisit; refactor for more efficient code
 /** expected result: an [] or similar to below
 [
   {id: 1, time: '12pm', interview: null},
@@ -21,7 +20,7 @@ export function getAppointmentsForDay(state, day) {
     if (Object.keys(state.appointments).includes(appointment.toString())) {
       result.push(state.appointments[appointment]);
     }
-  })
+  });
 
   return result;
 };
@@ -52,7 +51,6 @@ export function getInterview(state, interview) {
 };
 
 
-//to revisit; refactor for more efficient code
 /** expected result: an [] or similar to below
 [
   {  
@@ -82,7 +80,7 @@ export function getInterviewersForDay(state, day) {
     if (Object.keys(state.interviewers).includes(interviewer.toString())) {
       result.push(state.interviewers[interviewer]);
     }
-  })
+  });
 
   return result;
 };

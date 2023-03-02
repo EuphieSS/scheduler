@@ -6,6 +6,7 @@ import Form from "components/Appointment/Form";
 
 afterEach(cleanup);
 
+
 describe("Form", () => {
   const interviewers = [
     {
@@ -62,6 +63,7 @@ describe("Form", () => {
     expect(getByText(/please select an interviewer/i)).toBeInTheDocument();
     expect(onSave).not.toHaveBeenCalled();
   });
+
   
   it("can successfully save after trying to submit an empty student name", () => {
     const onSave = jest.fn();
@@ -85,6 +87,7 @@ describe("Form", () => {
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith("Lydia Miller-Jones", 1);
   });
+  
 
   it("calls onCancel and resets the input field", () => {
     const onCancel = jest.fn();
