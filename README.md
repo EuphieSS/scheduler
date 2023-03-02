@@ -12,10 +12,10 @@ This project is a single page application built using React. It is a simple and 
 
 ## Final Product
 
-![""]()
-![""]()
-![""]()
-![""]()
+!["day-selected"](https://github.com/EuphieSS/scheduler/blob/master/docs/day-selected.png?raw=true)
+!["edit-mode"](https://github.com/EuphieSS/scheduler/blob/master/docs/edit-mode.png?raw=true)
+!["delete-mode"](https://github.com/EuphieSS/scheduler/blob/master/docs/delete-mode.png?raw=true)
+!["error-mode"](https://github.com/EuphieSS/scheduler/blob/master/docs/error-mode.png?raw=true)
 
 ## Setup
 
